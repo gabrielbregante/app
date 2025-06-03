@@ -1,14 +1,43 @@
-<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi Sitio Instalable</title>
+  <title>Mi PWA con Botón de Instalación</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
+  <style>
+    body { font-family: sans-serif; padding: 2rem; text-align: center; }
+    #install { padding: 1rem 2rem; font-size: 1.2rem; display: none; }
+  </style>
 </head>
 <body>
-  <h1>Bienvenido a mi sitio instalable</h1>
-  <p>Este sitio cumple con los requisitos mínimos para poder ser instalado.</p>
+  <h1>Mi sitio instalable</h1>
+  <p>Este sitio ahora tiene un botón para instalar como app.</p>
+  <button id="install">Instalar App</button>
+
+  <script>
+    let deferredPrompt;
+    const installButton = document.getElementById('install');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installButton.style.display = 'inline-block';
+    });
+
+    installButton.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('Usuario aceptó la instalación');
+        } else {
+          console.log('Usuario rechazó la instalación');
+        }
+        deferredPrompt = null;
+        installButton.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
